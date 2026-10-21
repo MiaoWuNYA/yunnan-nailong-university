@@ -6,6 +6,13 @@
 
 主角是一只蓝色袋鼠玩偶：白底照片抠成透明图，当贴纸贴在校园照片上，最后被几条轮廓汇聚成云财校标里的古钱币。
 
+## 在线预览
+
+- 站点：<https://miaowunya.github.io/yunnan-nailong-university/>
+- 仓库：<https://github.com/MiaoWuNYA/yunnan-nailong-university>
+
+推送到 `main` 即自动重新部署（Pages 源为 `main` 分支根目录）。
+
 ## 文件
 
 | 文件 | 作用 |
