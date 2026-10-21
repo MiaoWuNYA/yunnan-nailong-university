@@ -50,10 +50,11 @@ body.s-lift .photo{opacity:0;transform:scale(.92);filter:brightness(.2) blur(10p
 .photo.has-photo .scene{display:none}
 .scene{display:block;width:100%;height:100%}
 
-/* 贴纸：位置为场景内百分比 */
+/* 贴纸：位置为场景内百分比。left/top 定的是元素左上角，元素宽 22%、
+   高约占舞台高的 20%，所以 39%/40% 才是几何居中（44%/52% 会偏右下） */
 .nl{
   position:absolute;
-  left:44%;top:52%;width:22%;
+  left:39%;top:40%;width:22%;
   isolation:isolate;
   transform-origin:50% 50%;
   will-change:transform;
@@ -83,7 +84,7 @@ body.s-merge .photo{opacity:0;filter:brightness(.15) blur(14px)}
 .card img{display:block;width:100%;height:auto;border-radius:4px;background:#eef4fb}
 .card-tag{
   display:block;padding:4px 2px 3px;text-align:center;
-  font-size:clamp(8px,1.9vw,10.5px);color:#5b6b7d;letter-spacing:.08em;
+  font-size:clamp(9px,2.1vw,12px);color:#5b6b7d;letter-spacing:.08em;
 }
 body.s-cards .card{opacity:1;transform:translate(-50%,-50%) scale(1)}
 body.s-merge .card{opacity:0;transition:opacity .45s var(--ease) .15s}
@@ -241,6 +242,12 @@ body.s-notes .note-col:nth-of-type(2) .note:nth-of-type(2){transition-delay:.42s
   .bar{margin-top:9px}
   .skip{margin-top:9px}
   .copyright{margin-top:7px}
+}
+
+/* 手机竖屏：舞台吃满整屏。原来只给 92vw 宽、高度被 3:4 锁死在屏高的六成左右，
+   四周一大圈深色留白，照片看着又小又糊。这里放开比例让舞台铺满。 */
+@media (max-aspect-ratio: 4/5){
+  .stage{width:100vw;height:100dvh;aspect-ratio:auto}
 }
 
 /* 便签弹窗 */

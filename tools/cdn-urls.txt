@@ -2,8 +2,8 @@
 # index.html 里的图片引用已全部指向这里；想切回本地文件，把 URL 换回文件名即可
 daishu.webp  https://bu.dusays.com/2026/10/21/6ad8568d50aa9.webp
 daishu.png   https://bu.dusays.com/2026/10/21/6ad856c087750.png
-photo.jpg    https://bu.dusays.com/2026/10/21/6ad859d65b52f.jpg
-p1.jpg       https://bu.dusays.com/2026/10/21/6ad856c25843e.jpg
-p2.jpg       https://bu.dusays.com/2026/10/21/6ad856c335998.jpg
-p3.jpg       https://bu.dusays.com/2026/10/21/6ad856c41480c.jpg
-p4.jpg       https://bu.dusays.com/2026/10/21/6ad856c4eed9f.jpg
+photo.jpg    https://bu.dusays.com/2026/10/21/6ad85fef5367f.jpg
+p1.jpg       https://bu.dusays.com/2026/10/21/6ad860545eab3.jpg
+p2.jpg       https://bu.dusays.com/2026/10/21/6ad860552b6d2.jpg
+p3.jpg       https://bu.dusays.com/2026/10/21/6ad86056040e4.jpg
+p4.jpg       https://bu.dusays.com/2026/10/21/6ad86056d2c6c.jpg
