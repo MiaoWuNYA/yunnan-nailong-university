@@ -50,11 +50,16 @@ body.s-lift .photo{opacity:0;transform:scale(.92);filter:brightness(.2) blur(10p
 .photo.has-photo .scene{display:none}
 .scene{display:block;width:100%;height:100%}
 
-/* 贴纸：位置为场景内百分比。left/top 定的是元素左上角，元素宽 22%、
-   高约占舞台高的 20%，所以 39%/40% 才是几何居中（44%/52% 会偏右下） */
+/* 贴纸：位置为场景内百分比。用 margin 负值做几何居中，而不是写死 top——
+   元素高度 = 宽度 × 700/576，随舞台宽高比变化（桌面 3:4 时占舞台高 20%，
+   手机铺满整屏时只占 13%），写死 top 会让手机端偏上 30px。
+   margin 的百分比按包含块**宽度**算，所以 -13.37% 正好抵消半个元素高度，
+   两个视口都对得上。 */
 .nl{
   position:absolute;
-  left:39%;top:40%;width:22%;
+  left:50%;top:50%;width:22%;
+  margin-left:-11%;
+  margin-top:-13.37%;
   isolation:isolate;
   transform-origin:50% 50%;
   will-change:transform;
