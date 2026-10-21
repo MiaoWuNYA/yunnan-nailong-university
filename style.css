@@ -1,0 +1,288 @@
+:root{
+  --yn-blue:#1a5aa0;        /* 云财蓝：校标上的地球 */
+  --yn-blue-deep:#0e3d73;
+  --yn-red:#b8232f;         /* 校名大红，只做点缀 */
+  --coin:#c9962c;           /* 古钱币的铜金 */
+  --coin-light:#e8bf5a;
+  --paper:#f7f3ea;
+  --ease:cubic-bezier(.65,0,.35,1);
+  --ease-out:cubic-bezier(.16,1,.3,1);
+  --ring-size:min(76vw,40vh);
+  --hero-gap:clamp(10px,2.2vh,24px);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;overflow:hidden}
+body{
+  font-family:"Songti SC","STSong","Noto Serif SC","Source Han Serif SC","SimSun",serif;
+  background:#0a1424;color:#fff;
+  -webkit-font-smoothing:antialiased;
+}
+.sprite{position:absolute;width:0;height:0;overflow:hidden}
+
+/* 背景：从夜色渐变到宣纸色 */
+.bg{position:fixed;inset:0;background:#0a1424;transition:background 1.2s var(--ease)}
+.bg::after{
+  content:"";position:absolute;inset:0;opacity:0;transition:opacity 1.2s var(--ease);
+  background:
+    radial-gradient(circle at 50% 42%,rgba(26,90,160,.10),transparent 60%),
+    var(--paper);
+}
+body.s-tint .bg::after{opacity:1}
+
+/* 舞台：保持 3:4，手机竖屏几乎全屏，电脑居中 */
+.stage{
+  position:fixed;left:50%;top:50%;
+  height:min(92vh,92vw*4/3);height:min(92dvh,92vw*4/3);
+  aspect-ratio:3/4;
+  transform:translate(-50%,-50%);
+}
+.photo{position:absolute;inset:0;overflow:hidden;background:#0b1a2e;
+  border-radius:clamp(10px,2vw,18px);
+  box-shadow:0 30px 80px rgba(0,0,0,.55);
+  opacity:0;transform:scale(1.06);filter:blur(6px);
+  transition:opacity 1s var(--ease-out),transform 1.6s var(--ease-out),filter 1s var(--ease-out);
+}
+body.s-in .photo{opacity:1;transform:none;filter:none}
+body.s-cut .photo{filter:brightness(.35) saturate(.4) blur(2px);transform:scale(.98)}
+body.s-lift .photo{opacity:0;transform:scale(.92);filter:brightness(.2) blur(10px)}
+/* photo.jpg 在场时盖掉内置的 SVG 夜色；没上传就只显示 SVG */
+.scene-img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.photo.has-photo .scene{display:none}
+.scene{display:block;width:100%;height:100%}
+
+/* 贴纸：位置为场景内百分比 */
+.nl{
+  position:absolute;
+  left:44%;top:52%;width:22%;
+  isolation:isolate;
+  transform-origin:50% 50%;
+  will-change:transform;
+  opacity:0;
+}
+body.s-in .nl{opacity:1}
+.nl picture{display:block}
+.nl-img{display:block;width:100%;height:auto;transition:filter 1.2s var(--ease)}
+body.s-cut .nl-img{filter:drop-shadow(0 0 2px #fff) drop-shadow(0 0 14px rgba(255,236,150,.95))}
+body.s-merge .nl-img{opacity:0;transition:opacity .35s var(--ease)}
+body.s-merge .photo{opacity:0;filter:brightness(.15) blur(14px)}
+
+/* 拍立得卡片：校园里其它几处的贴纸 */
+.cards{
+  position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);
+  width:min(100vw,108vh);height:100%;pointer-events:none;z-index:3;
+}
+.card{
+  position:absolute;left:var(--x);top:var(--y);
+  width:clamp(84px,22vw,140px);
+  padding:5px 5px 4px;background:#fff;border-radius:7px;
+  box-shadow:0 14px 34px rgba(0,0,0,.5);
+  transform:translate(calc(-50% + var(--fx,0px)),calc(-50% + var(--fy,0px))) scale(.5);
+  opacity:0;
+  transition:transform .85s var(--ease-out) var(--d,0s),opacity .5s var(--ease) var(--d,0s);
+}
+.card img{display:block;width:100%;height:auto;border-radius:4px;background:#eef4fb}
+.card-tag{
+  display:block;padding:4px 2px 3px;text-align:center;
+  font-size:clamp(8px,1.9vw,10.5px);color:#5b6b7d;letter-spacing:.08em;
+}
+body.s-cards .card{opacity:1;transform:translate(-50%,-50%) scale(1)}
+body.s-merge .card{opacity:0;transition:opacity .45s var(--ease) .15s}
+
+/* 汇聚层 */
+.morph{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:4;overflow:visible}
+.morph path{stroke-width:3;stroke-linejoin:round}
+
+/* 剪切时的果冻形变 */
+.nl.wobble{animation:wobble .9s var(--ease-out)}
+@keyframes wobble{
+  0%{scale:1 1}25%{scale:1.12 .9}50%{scale:.94 1.08}75%{scale:1.03 .98}100%{scale:1 1}
+}
+
+/* 最终画面：校徽、便签、文案同一个纵向弹性容器 */
+.hero{
+  position:fixed;inset:0;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:var(--hero-gap);
+  padding:16px 0 max(16px,calc(env(safe-area-inset-bottom) + 10px));
+  opacity:0;pointer-events:none;
+  transition:opacity .8s var(--ease);
+}
+body.s-ring .hero{opacity:1;pointer-events:auto}
+
+/* 校徽环 */
+.emblem{
+  flex:none;width:var(--ring-size);height:auto;
+  transform:scale(.85) rotate(-20deg);
+  transition:transform 1.4s var(--ease-out);
+}
+body.s-ring .emblem{transform:none}
+.ring-outer,.ring-inner{fill:none;stroke:var(--yn-blue);stroke-dasharray:1300;stroke-dashoffset:1300;transition:stroke-dashoffset 1.6s var(--ease)}
+.ring-outer{stroke-width:5}
+.ring-inner{stroke-width:2;stroke-dasharray:900;stroke-dashoffset:900;transition-delay:.15s}
+body.s-ring .ring-outer,body.s-ring .ring-inner{stroke-dashoffset:0}
+.ring-cn,.ring-en{fill:var(--yn-blue);opacity:0;transition:opacity 1s var(--ease) .5s}
+.ring-cn{font-size:30px;font-weight:700;letter-spacing:1px}
+.ring-en{font-size:15px;letter-spacing:3.4px;font-family:Georgia,"Times New Roman",serif}
+body.s-ring .ring-cn,body.s-ring .ring-en{opacity:1}
+
+/* 环内的校标：地球圆 + 方足布 + 1951，逐笔描出 */
+.globe{
+  fill:rgba(26,90,160,.07);
+  stroke:var(--yn-blue);stroke-width:4;
+  stroke-dasharray:742;stroke-dashoffset:742;
+  transition:stroke-dashoffset 1.1s var(--ease) .25s,fill .9s var(--ease) .9s;
+}
+body.s-ring .globe{stroke-dashoffset:0}
+/* 地球的经纬线：淡入，不抢布币 */
+.globe-grid ellipse{
+  fill:none;stroke:var(--yn-blue);stroke-width:1.8;
+  opacity:0;transition:opacity .9s var(--ease) .75s;
+}
+body.s-ring .globe-grid ellipse{opacity:.45}
+.bu{
+  fill:url(#coinGrad);fill-opacity:0;
+  stroke:var(--coin);stroke-width:5;stroke-linejoin:round;
+  stroke-dasharray:100;stroke-dashoffset:100;
+  transition:stroke-dashoffset 1.2s var(--ease-out) .35s,fill-opacity .9s var(--ease) .95s;
+}
+body.s-ring .bu{stroke-dashoffset:0;fill-opacity:.68}
+.year{
+  fill:var(--yn-red);font-size:24px;letter-spacing:3px;font-weight:700;
+  font-family:Georgia,"Times New Roman",serif;
+  opacity:0;transition:opacity .8s var(--ease) 1.1s;
+}
+body.s-ring .year{opacity:1}
+/* 轮廓交接：布币成形后，汇聚层让位给校标，由校标把同一形状重新描一遍 */
+.morph path{transition:opacity .5s var(--ease)}
+body.s-ring .morph path{opacity:0;transition-delay:.3s}
+
+/* 文案 */
+.caption{
+  flex:none;text-align:center;color:var(--yn-blue);
+  padding:0 20px;transform:translateY(14px);
+  transition:transform .9s var(--ease-out);
+}
+body.s-ring .caption{transform:none}
+.title{font-size:clamp(24px,min(6vw,4.2vh),44px);letter-spacing:.35em;text-indent:.35em;font-weight:900}
+.motto{margin-top:6px;font-size:clamp(12px,min(2.6vw,1.9vh),16px);letter-spacing:.5em;text-indent:.5em;color:#8a6a2c}
+.status{margin-top:18px;font-size:clamp(13px,min(3vw,2.1vh),17px);letter-spacing:.12em;color:#3f5b7d}
+.dots i{font-style:normal;animation:dot 1.2s infinite}
+.dots i:nth-child(2){animation-delay:.2s}.dots i:nth-child(3){animation-delay:.4s}
+@keyframes dot{0%,80%,100%{opacity:.15}40%{opacity:1}}
+.bar{margin:12px auto 0;width:min(280px,64vw);height:3px;border-radius:3px;background:rgba(26,90,160,.15);overflow:hidden}
+.bar span{display:block;height:100%;width:100%;background:var(--yn-blue);transform:scaleX(0);transform-origin:left}
+.skip{display:inline-block;margin-top:14px;font-size:13px;color:#8a6a2c;text-decoration:none;letter-spacing:.1em;opacity:.75}
+.skip:hover,.skip:focus-visible{opacity:1;text-decoration:underline}
+.copyright{margin-top:10px;font-size:11px;letter-spacing:.14em;color:#a3968a;opacity:.85}
+
+/* 小便签广告 */
+.notes{
+  flex:none;display:flex;justify-content:center;align-items:center;
+  gap:clamp(16px,4vw,30px);padding:0 12px;
+  z-index:5;
+}
+.note-col{display:flex;flex-direction:column;align-items:center}
+.note-col .note+.note{margin-top:6px;left:6px;z-index:2;
+  box-shadow:0 10px 22px rgba(40,50,70,.2),0 1px 0 rgba(255,255,255,.85) inset}
+.note-col .note+.note::before{width:72px;height:16px;top:-9px;transform:translateX(-50%) rotate(-1.6deg)}
+.note{
+  position:relative;display:block;width:clamp(118px,40vw,240px);
+  padding:10px 10px 9px;border-radius:3px;
+  font-family:inherit;border:0;text-align:center;cursor:pointer;
+  pointer-events:auto;-webkit-tap-highlight-color:transparent;
+  font-size:clamp(10.5px,min(2.9vw,1.75vh),13.5px);line-height:1.45;
+  box-shadow:0 7px 18px rgba(40,50,70,.14),0 1px 0 rgba(255,255,255,.85) inset;
+  opacity:0;
+  transform:translateY(14px) rotate(var(--rot,0deg)) scale(.9);
+  transition:opacity .5s var(--ease-out),transform .6s var(--ease-out);
+}
+/* 顶端的一小条胶带 */
+.note::before{
+  content:"";position:absolute;top:-7px;left:50%;
+  width:38px;height:14px;transform:translateX(-50%) rotate(-2.5deg);
+  background:rgba(206,186,140,.5);
+  box-shadow:0 1px 3px rgba(0,0,0,.1);
+}
+.note-t1{display:block;font-size:1.1em;font-weight:700;letter-spacing:.06em}
+.note-t2{display:block;font-size:.92em;margin-top:3px;opacity:.82}
+.nb{white-space:nowrap}
+.note-sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+a.note{text-decoration:none}
+.note:hover,.note:focus-visible{
+  transform:translateY(-3px) rotate(var(--rot,0deg)) scale(1.03);
+  box-shadow:0 12px 26px rgba(40,50,70,.2);
+  outline:none;
+}
+.note:focus-visible{box-shadow:0 0 0 3px rgba(26,90,160,.45),0 12px 26px rgba(40,50,70,.2)}
+.note-zs{background:#eaf2fb;color:#37506e}
+.note-zs .note-t1{color:#1a5aa0}
+.note-kf{background:#fbf3e4;color:#6b4a2a}
+.note-kf .note-t1{color:#a4701c}
+.note-tb{background:#f2eefb;color:#4a3d6b}
+.note-tb .note-t1{color:#6b46c1}
+.note-warn{background:#fdeeee;color:#7a3b3b}
+.note-warn .note-t1{color:var(--yn-red)}
+body.s-notes .note{opacity:1;transform:translateY(0) rotate(var(--rot,0deg)) scale(1)}
+body.s-notes .note-col:nth-of-type(1) .note:nth-of-type(1){transition-delay:0s}
+body.s-notes .note-col:nth-of-type(1) .note:nth-of-type(2){transition-delay:.14s}
+body.s-notes .note-col:nth-of-type(2) .note:nth-of-type(1){transition-delay:.28s}
+body.s-notes .note-col:nth-of-type(2) .note:nth-of-type(2){transition-delay:.42s}
+
+/* 矮屏压缩，避免校徽、便签、文案互相叠 */
+@media (max-height:800px){
+  :root{--ring-size:min(58vw,27vh);--hero-gap:clamp(7px,1.5vh,14px)}
+  .note{padding:8px 9px 7px;font-size:10px}
+  .note-col .note+.note{margin-top:5px}
+  .notes{gap:clamp(10px,3.4vw,24px)}
+  .note{width:clamp(112px,40vw,240px)}
+  .title{font-size:clamp(21px,5.4vw,34px)}
+  .motto{margin-top:3px}
+  .status{margin-top:11px}
+  .bar{margin-top:9px}
+  .skip{margin-top:9px}
+  .copyright{margin-top:7px}
+}
+
+/* 便签弹窗 */
+.modal{position:fixed;inset:0;z-index:20;display:flex;align-items:center;justify-content:center;padding:20px}
+.modal[hidden]{display:none}
+.modal-back{
+  position:absolute;inset:0;background:rgba(12,26,44,.62);
+  -webkit-backdrop-filter:blur(3px);backdrop-filter:blur(3px);
+  opacity:0;transition:opacity .25s var(--ease);
+}
+.modal-card{
+  position:relative;width:min(86vw,340px);max-height:88vh;overflow:auto;
+  background:#fff;border-radius:12px;padding:16px 16px 10px;
+  box-shadow:0 26px 64px rgba(0,0,0,.42);
+  opacity:0;transform:translateY(16px) scale(.95);
+  transition:opacity .26s var(--ease),transform .34s var(--ease-out);
+}
+.modal.is-open .modal-back{opacity:1}
+.modal.is-open .modal-card{opacity:1;transform:none}
+.modal-title{margin:0 26px 10px 0;font-size:15px;letter-spacing:.14em;color:var(--yn-blue)}
+.modal-body{font-size:12.5px;line-height:1.75;color:#4a5568;letter-spacing:.03em}
+.modal-body p{margin:0 0 8px}
+.modal-body p:last-child{margin-bottom:0}
+.modal-body strong{color:var(--yn-blue);font-weight:700}
+.modal-figure{display:block;width:min(58%,150px);margin:2px auto 12px;height:auto}
+.modal-hint{margin-top:10px;font-size:11.5px;text-align:center;color:#8a6a2c;letter-spacing:.05em}
+.modal-x{
+  position:absolute;right:6px;top:6px;width:30px;height:30px;
+  border:0;border-radius:50%;background:rgba(0,0,0,.07);color:#4a5568;
+  font-size:19px;line-height:1;cursor:pointer;font-family:inherit;
+}
+.modal-x:hover{background:rgba(0,0,0,.14)}
+
+/* 转场：云财蓝的圆从校徽处扩散铺满 */
+.wipe{
+  position:fixed;inset:0;background:var(--yn-blue);
+  clip-path:circle(0% at var(--wx,50%) var(--wy,42%));
+  transition:clip-path 1s var(--ease);
+  pointer-events:none;z-index:10;
+}
+body.s-wipe .wipe{clip-path:circle(150% at var(--wx,50%) var(--wy,42%))}
+
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.01ms!important;transition-duration:.3s!important}
+}

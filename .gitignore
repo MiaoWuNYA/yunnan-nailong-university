@@ -1,0 +1,12 @@
+# 系统垃圾
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Python 缓存（tools/ 下的脚本）
+__pycache__/
+*.pyc
+
+# 临时产物
+*.log
+/tmp/
